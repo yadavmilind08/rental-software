@@ -1,6 +1,6 @@
 .input-search {
-  width: 150px;
-  margin: 20px 0;
+  width: 150px !important;
+  margin: 20px 0 !important;
   float: right;
 }
 

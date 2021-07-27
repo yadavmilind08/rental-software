@@ -34,14 +34,12 @@ const columns = [
   },
 ];
 
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(
-      `selectedRowKeys: ${selectedRowKeys}`,
-      "selectedRows: ",
-      selectedRows
-    );
-  },
+const handleRowSelection = (selectedRowKeys, selectedRows) => {
+  console.log(
+    `selectedRowKeys: ${selectedRowKeys}`,
+    "selectedRows: ",
+    selectedRows
+  );
 };
 
 export const ProductList = ({ data }) => {
@@ -49,7 +47,7 @@ export const ProductList = ({ data }) => {
     <Table
       rowSelection={{
         type: "radio",
-        ...rowSelection,
+        onChange: handleRowSelection,
       }}
       bordered
       columns={columns}
