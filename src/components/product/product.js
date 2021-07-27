@@ -11,6 +11,8 @@ export const Product = () => {
   const [visibleReturn, setVisibleReturn] = useState(false);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [disabled, setDisabled] = useState(true);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const getData = () => {
     fetch("data.json", {
@@ -60,7 +62,7 @@ export const Product = () => {
     setVisibleReturn(false);
   };
 
-  const handleChange = (event) => {
+  const handleSearch = (event) => {
     const { target } = event;
     const value = target.value;
     if (value) {
@@ -73,29 +75,46 @@ export const Product = () => {
     }
   };
 
+  const handleRowSelection = (selectedRowKeys, selectedRows) => {
+    setDisabled(selectedRows.length <= 0);
+    setSelectedRow(selectedRows[0]);
+    console.log(
+      `selectedRowKeys: ${selectedRowKeys}`,
+      "selectedRows: ",
+      selectedRows
+    );
+  };
+
   return (
     <>
       <Input
         className="input-search"
         placeholder="Search"
-        onChange={handleChange}
+        onChange={handleSearch}
       />
-      <ProductList data={filteredData} />
+      <ProductList
+        data={filteredData}
+        handleRowSelection={handleRowSelection}
+      />
       <Space className="action-buttons">
-        <Button type="primary" onClick={showModal}>
+        <Button type="primary" onClick={showModal} disabled={disabled}>
           Book
         </Button>
-        <Button onClick={showReturnModal}>Return</Button>
+        <Button onClick={showReturnModal} disabled={disabled}>
+          Return
+        </Button>
       </Space>
       <BookProduct
         visible={visible}
         handleOk={handleOk}
         handleCancel={handleCancel}
+        data={selectedRow}
       />
       <ReturnProduct
         visible={visibleReturn}
         handleOk={handleReturnOk}
         handleCancel={handleReturnCancel}
+        data={selectedRow}
       />
     </>
   );

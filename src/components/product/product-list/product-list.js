@@ -34,15 +34,7 @@ const columns = [
   },
 ];
 
-const handleRowSelection = (selectedRowKeys, selectedRows) => {
-  console.log(
-    `selectedRowKeys: ${selectedRowKeys}`,
-    "selectedRows: ",
-    selectedRows
-  );
-};
-
-export const ProductList = ({ data }) => {
+export const ProductList = ({ data, handleRowSelection }) => {
   return (
     <Table
       rowSelection={{

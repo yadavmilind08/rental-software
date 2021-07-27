@@ -4,19 +4,20 @@ import { ConfirmModal } from "../../../shared/confirm-modal";
 
 const { Option } = Select;
 
-function handleChange(value) {
-  console.log(`selected ${value}`);
-}
-
-function onChange(date, dateString) {
-  console.log(date, dateString);
-}
-
-export const BookProduct = ({ visible, handleOk, handleCancel }) => {
+export const BookProduct = ({ visible, handleOk, handleCancel, data }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  const [price, setPrice] = useState(0);
 
   const handleBook = () => {
     setShowConfirmModal(true);
+    if (endDate > startDate) {
+      const diffTime = Math.abs(endDate - startDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      setPrice(diffDays * data?.price);
+    }
     handleOk();
   };
 
@@ -26,6 +27,16 @@ export const BookProduct = ({ visible, handleOk, handleCancel }) => {
 
   const handleConfirmCancel = () => {
     setShowConfirmModal(false);
+  };
+
+  const handleStartDate = (date, dateString) => {
+    console.log(date, dateString);
+    setStartDate(date);
+  };
+
+  const handleEndDate = (date, dateString) => {
+    console.log(date, dateString);
+    setEndDate(date);
   };
 
   return (
@@ -45,22 +56,21 @@ export const BookProduct = ({ visible, handleOk, handleCancel }) => {
         ]}
       >
         <Space direction="vertical">
-          <Select
-            defaultValue="Air Compressor 12 GAS"
-            onChange={handleChange}
-            style={{ width: 280 }}
-          >
-            <Option value="Air Compressor 12 GAS">Air Compressor 12 GAS</Option>
-            <Option value="Air Compressor 5 Electric">
-              Air Compressor 5 Electric
-            </Option>
-            <Option value="Dia Blade 14 inch">Dia Blade 14 inch</Option>
-            <Option value="Copper Blade 5 inch">Copper Blade 5 inch</Option>
+          <Select defaultValue={data?.name} style={{ width: 280 }}>
+            <Option value={data?.name}>{data?.name}</Option>
           </Select>
           <>
             <Space>
-              <DatePicker placeholder="From" onChange={onChange} />
-              <DatePicker placeholder="To" onChange={onChange} />
+              <DatePicker
+                placeholder="From"
+                name="fromDate"
+                onChange={handleStartDate}
+              />
+              <DatePicker
+                placeholder="To"
+                name="toDate"
+                onChange={handleEndDate}
+              />
             </Space>
           </>
         </Space>
@@ -73,7 +83,7 @@ export const BookProduct = ({ visible, handleOk, handleCancel }) => {
       >
         <>
           <p>
-            Your estimated price is <strong>$###</strong>
+            Your estimated price is <strong>$&nbsp;{price}</strong>
           </p>
           <p>Do you want to proceed?</p>
         </>
