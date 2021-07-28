@@ -4,7 +4,13 @@ import { ConfirmModal } from "../../../shared/confirm-modal";
 
 const { Option } = Select;
 
-export const BookProduct = ({ visible, handleOk, handleCancel, data }) => {
+export const BookProduct = ({
+  visible,
+  handleOk,
+  handleCancel,
+  confirmedBooking,
+  data,
+}) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -13,7 +19,8 @@ export const BookProduct = ({ visible, handleOk, handleCancel, data }) => {
 
   const handleBook = () => {
     setShowConfirmModal(true);
-    if (endDate > startDate) {
+    setPrice(data?.minimum_rent_period * data?.price);
+    if (startDate && endDate && endDate >= startDate) {
       const diffTime = Math.abs(endDate - startDate);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       setPrice(diffDays * data?.price);
@@ -22,6 +29,7 @@ export const BookProduct = ({ visible, handleOk, handleCancel, data }) => {
   };
 
   const handleConfirmOk = () => {
+    confirmedBooking();
     setShowConfirmModal(false);
   };
 
@@ -30,12 +38,10 @@ export const BookProduct = ({ visible, handleOk, handleCancel, data }) => {
   };
 
   const handleStartDate = (date, dateString) => {
-    console.log(date, dateString);
     setStartDate(date);
   };
 
   const handleEndDate = (date, dateString) => {
-    console.log(date, dateString);
     setEndDate(date);
   };
 
@@ -44,7 +50,7 @@ export const BookProduct = ({ visible, handleOk, handleCancel, data }) => {
       <Modal
         visible={visible}
         title="Book a Product"
-        onOk={handleOk}
+        onOk={handleBook}
         onCancel={handleCancel}
         footer={[
           <Button key="back" onClick={handleCancel}>

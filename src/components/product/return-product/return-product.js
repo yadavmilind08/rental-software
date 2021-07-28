@@ -6,24 +6,35 @@ import "./return-product.css";
 
 const { Option } = Select;
 
-function handleChange(value) {
-  console.log(`selected ${value}`);
-}
-
-export const ReturnProduct = ({ visible, handleOk, handleCancel }) => {
+export const ReturnProduct = ({
+  visible,
+  handleOk,
+  handleCancel,
+  confirmedReturning,
+  data,
+}) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [price, setPrice] = useState(0);
+  const [usedMileage, setUsedMileage] = useState(0);
 
   const handleReturn = () => {
     setShowConfirmModal(true);
+    setPrice(data?.minimum_rent_period * data?.price);
     handleOk();
   };
 
   const handleConfirmOk = () => {
+    confirmedReturning(usedMileage);
     setShowConfirmModal(false);
   };
 
   const handleConfirmCancel = () => {
     setShowConfirmModal(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { value } = e.target;
+    setUsedMileage(value);
   };
 
   return (
@@ -43,19 +54,14 @@ export const ReturnProduct = ({ visible, handleOk, handleCancel }) => {
         ]}
       >
         <Space direction="vertical">
-          <Select
-            defaultValue="Air Compressor 12 GAS"
-            onChange={handleChange}
-            className="select-input"
-          >
-            <Option value="Air Compressor 12 GAS">Air Compressor 12 GAS</Option>
-            <Option value="Air Compressor 5 Electric">
-              Air Compressor 5 Electric
-            </Option>
-            <Option value="Dia Blade 14 inch">Dia Blade 14 inch</Option>
-            <Option value="Copper Blade 5 inch">Copper Blade 5 inch</Option>
+          <Select defaultValue={data?.name} style={{ width: 280 }}>
+            <Option value={data?.name}>{data?.name}</Option>
           </Select>
-          <Input value="3000" />
+          <Input
+            defaultValue={data?.mileage || 0}
+            onChange={handleInputChange}
+            placeholder="Used Mileage"
+          />
         </Space>
       </Modal>
       <ConfirmModal
@@ -66,7 +72,7 @@ export const ReturnProduct = ({ visible, handleOk, handleCancel }) => {
       >
         <>
           <p>
-            Your total price is <strong>$###</strong>
+            Your total price is <strong>$&nbsp;{price}</strong>
           </p>
           <p>Do you want to proceed?</p>
         </>

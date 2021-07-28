@@ -11,7 +11,6 @@ export const Product = () => {
   const [visibleReturn, setVisibleReturn] = useState(false);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [disabled, setDisabled] = useState(true);
   const [selectedRow, setSelectedRow] = useState(null);
 
   const getData = () => {
@@ -50,6 +49,30 @@ export const Product = () => {
     setVisible(false);
   };
 
+  const confirmedBooking = () => {
+    const booked = filteredData.find((x) => x.code === selectedRow.code);
+    const index = filteredData.indexOf(selectedRow);
+    const newData = [...filteredData];
+    newData[index] = { ...booked, availability: false };
+    setSelectedRow({ ...booked, availability: false });
+    setFilteredData(newData);
+  };
+
+  const confirmedReturning = (usedMileage) => {
+    console.log({ usedMileage });
+    const booked = filteredData.find((x) => x.code === selectedRow.code);
+    const index = filteredData.indexOf(selectedRow);
+    const newData = [...filteredData];
+    let mileage = +usedMileage;
+    if (booked.mileage) {
+      mileage = mileage + usedMileage;
+    }
+    const availability = mileage > 0;
+    newData[index] = { ...booked, mileage, availability };
+    setSelectedRow({ ...booked, mileage, availability });
+    setFilteredData(newData);
+  };
+
   const showReturnModal = () => {
     setVisibleReturn(true);
   };
@@ -76,7 +99,6 @@ export const Product = () => {
   };
 
   const handleRowSelection = (selectedRowKeys, selectedRows) => {
-    setDisabled(selectedRows.length <= 0);
     setSelectedRow(selectedRows[0]);
     console.log(
       `selectedRowKeys: ${selectedRowKeys}`,
@@ -97,10 +119,17 @@ export const Product = () => {
         handleRowSelection={handleRowSelection}
       />
       <Space className="action-buttons">
-        <Button type="primary" onClick={showModal} disabled={disabled}>
+        <Button
+          type="primary"
+          onClick={showModal}
+          disabled={!selectedRow || !selectedRow?.availability}
+        >
           Book
         </Button>
-        <Button onClick={showReturnModal} disabled={disabled}>
+        <Button
+          onClick={showReturnModal}
+          disabled={!selectedRow || selectedRow?.availability}
+        >
           Return
         </Button>
       </Space>
@@ -108,12 +137,14 @@ export const Product = () => {
         visible={visible}
         handleOk={handleOk}
         handleCancel={handleCancel}
+        confirmedBooking={confirmedBooking}
         data={selectedRow}
       />
       <ReturnProduct
         visible={visibleReturn}
         handleOk={handleReturnOk}
         handleCancel={handleReturnCancel}
+        confirmedReturning={confirmedReturning}
         data={selectedRow}
       />
     </>

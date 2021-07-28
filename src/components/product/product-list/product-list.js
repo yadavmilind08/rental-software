@@ -27,6 +27,11 @@ const columns = [
   {
     title: "Durability",
     dataIndex: "max_durability",
+    render: (value, data, index) => (
+      <span>
+        {data.durability}/{value}
+      </span>
+    ),
   },
   {
     title: "Mileage",
